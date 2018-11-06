@@ -1,18 +1,9 @@
-# TODO - total rewrite - this one isn't based on Karl's example
+# Lambda Authorizer for AWS API Gateway using [Okta's jwt-verifier for Node]('https://github.com/okta/okta-oidc-js/tree/master/packages/jwt-verifier')
 
-# Sample Lambda Authorizer for AWS API Gateway
-This sample is based on https://github.com/mcguinness/node-lambda-oauth2-jwt-authorizer by Karl McGuinness. Karl's original README can be found on his github repo at [https://github.com/mcguinness/node-lambda-oauth2-jwt-authorizer](https://github.com/mcguinness/node-lambda-oauth2-jwt-authorizer). A modified version, including changes made for this sample, is included below.
-
-This project is sample implementation of an AWS Lambda custom authorizer for [AWS API Gateway](https://aws.amazon.com/api-gateway/) that works with a JWT bearer token (`id_token` or `access_token`) issued by an OAuth 2.0 Authorization Server.  It can be used to secure access to APIs managed by [AWS API Gateway](https://aws.amazon.com/api-gateway/).
+This project is sample implementation of an AWS Lambda custom authorizer for [AWS API Gateway](https://aws.amazon.com/api-gateway/) that works with a JWT bearer token (`access_token`) issued by an OAuth 2.0 Authorization Server.  It can be used to secure access to APIs managed by [AWS API Gateway](https://aws.amazon.com/api-gateway/).
 
 ## Use Case
 This authorize was built as a demo tool to show how to secure an API resource on AWS API Gateway using OAuth 2.0. The authorizer is specifically designed to work with [mock_api_lambda](https://github.com/bgarlow/mock_api_lambda), a Lambda Function that serves as a mock API endpoint. The authorizer adds data about the policy decision (success and failure) to the context object of it's response to the API Gateway. The mock_api_lambda function, in turn, returns that contextual information in it's response. 
-
-In addition to 
-
-## Configuration
-
-## How it works
 
 ### Scopes
 
@@ -43,7 +34,6 @@ To use the messages returned in the `authorizerMessage` attribute, you'll need t
 }
 ```
 
-
 Where `$context.authorizer.authorizerMessage` is the `authorizerMessage` attribute returned on the policy document context object.
 
 ### Environment Variables (.env)
@@ -59,15 +49,6 @@ It is critical that the `issuer` and `audience` claims for JWT bearer tokens are
 
 The `audience` value should uniquely identify your AWS API Gateway deployment.  You should assign unique audiences for each API Gateway authorizer instance so that a token intended for one gateway is not valid for another.
 
-### Signature Keys (keys.json)
-
-Update `keys.json` with the JSON Web Key Set (JWKS) format for your issuer.   You can usually obtain the JWKS for your issuer by fetching the `jwks_uri` published in your issuer's metadata such as `${issuer}/.well-known/openid-configuration`.
-
-> The authorizer only supports RSA signature keys
-
-> Ensure that your issuer uses a pinned key for token signatures and does not automatically rotate signing keys.  The authorizer currently does not support persistence of cached keys (e.g. dynamo) obtained via metadata discovery.
-
-
 # Deployment
 
 ### Install Dependencies
@@ -75,8 +56,6 @@ Update `keys.json` with the JSON Web Key Set (JWKS) format for your issuer.   Yo
 Run `npm install` to download all of the authorizer's dependent modules. This is a prerequisite for deployment as AWS Lambda requires these files to be included in the uploaded bundle.
 
 ### Create Bundle
-
-There are several ways to deploy this lambda to AWS. This document won't go into those details, but you will need a bundle, so:
 
 Run `npm run bundle`. This will create custom-authorizer.zip with all the source, configuration and node modules AWS Lambda needs.
 
