@@ -1,28 +1,9 @@
 require('dotenv').config();
-//const JwtTokenHandler = require('oauth2-bearer-jwt-handler').JwtTokenHandler;
 const AuthPolicy = require('./auth-policy');
-//const fs = require('fs');
-//const jwksClient = require('jwks-rsa');
-
 const OktaJwtVerifier = require('@okta/jwt-verifier');
-
 const issuer = process.env.ISSUER;
 const audience = process.env.AUDIENCE;
 const clientId = process.env.CLIENT_ID;
-
-/*
-// current version uses static keys file
-const jwks = fs.readFileSync('keys.json', 'utf8');
-let tokenClaims;
-let validatorError;
-
-const jwtTokenHandler = new JwtTokenHandler({
-    issuer: issuer,
-    audience: audience,
-    jwks: jwks
-});
-*/
-
 const oktaAccessTokenVerifier = new OktaJwtVerifier({
     issuer: issuer,
     clientId: clientId
@@ -227,81 +208,4 @@ exports.handler = function (event, context, callback) {
             callback(null, policyDoc);
         });
 
-
-    /*
-    // Validate the token using
-    jwtTokenHandler.verifyRequest({
-        headers: {
-            authorization: event.authorizationToken
-        }
-    }, function (err, claims) {
-        tokenClaims = claims;
-        validatorError = err;
-
-        // There was an error validating the token. Build a "deny-all" policy and set context info for our
-        //  demo to consume and display. API gateway responses will be edited to display authorizer.err.
-        if (err) {
-
-            console.log(`Error in jwtTokenHandler.verifyRequest follows...`);
-            console.log(err);
-
-            let policy = buildPolicyDocument(claims, awsAccountId, apiOptions, resource, pathParam, true);
-            let policyDoc = policy.build();
-
-            const errString = err.toString();
-            policyDoc.context = {
-                authorizerMessage: errString
-            };
-
-            console.log(`Failed to validate bearer token: ${errString}`);
-
-            // In order for AWS Gateway to return a generic 401 response, you have to send 'Unauthorized' to the callback.
-            // We want to return the policy document along with the context object so that we can see what actually failed,
-            // so we'll be getting 403 Access Denied. The API gateway's response message for 403 Access Denied has been edited
-            // to show the err value populated above.
-            //return callback('Unauthorized');
-
-            console.log(`Error Condition: policyDoc follows...`);
-            console.log(JSON.stringify(policyDoc));
-            callback(null, policyDoc);
-        }
-
-
-        let policy = buildPolicyDocument(claims, awsAccountId, apiOptions, resource, pathParam, false);
-
-        const scopes = (claims && claims.scp) ? claims.scp.join(' ') : null;
-
-        let policyDoc = policy.build();
-
-        // Pack the authorizer context with some useful info that can be referenced by the API
-        const authorizerResponseContext = {
-            issuer: issuer,
-            audience: audience,
-            jwks: jwks.toString(),
-            claims: JSON.stringify(tokenClaims),
-            awsAccountId: awsAccountId,
-            region: apiOptions.region,
-            restApiId: apiOptions.restApiId,
-            state: apiOptions.stage,
-            scopes: scopes,
-            method: method,
-            apiResource: resource,
-            pathParam: pathParam,
-            principalId: policyDoc.principalId,
-            version: policyDoc.policyDocument.Version,
-            action: policyDoc.policyDocument.Statement[0].Action,
-            effect: policyDoc.policyDocument.Statement[0].Effect,
-            resource: policyDoc.policyDocument.Statement[0].Resource.join(" "),
-            authorizerMessage: authorizerMessage
-
-        }
-
-        policyDoc.context = authorizerResponseContext;
-
-        console.log(`policyDoc follows...`);
-        console.log(JSON.stringify(policyDoc));
-
-        callback(null, policyDoc);
-    });
-    */
 };
