@@ -1,0 +1,3 @@
+ISSUER=https://btgapi.okta.com/oauth2/aus11dko07fCEDKnV2p7
+AUDIENCE=fileshare.com
+CLIENT_ID=0oa11dnd8y99yf2Te2p7
